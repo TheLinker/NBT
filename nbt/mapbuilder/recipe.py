@@ -38,6 +38,20 @@ class block_recipe:
 		delta_x = abs(max[0]-min[0])+1
 		delta_y = abs(max[1]-min[1])+1
 		delta_z = abs(max[2]-min[2])+1
-		print str(delta_x)+","+str(delta_y)+","+str(delta_z)
+		#print str(delta_x)+","+str(delta_y)+","+str(delta_z)
 		return delta_x*delta_y*delta_z
+		
+	def get_size(self):
+		min,max = self.get_extents()
+		return (abs(max[0]-min[0])+1, abs(max[1]-min[1])+1, abs(max[2]-min[2])+1)
+		
+	def apply(self, blocks, point, fill_air=False):
+		# Copy the recipe into the "blocks" block dictionary
+		size = self.get_size()
+		start_x = point[0]+self.min_x
+		start_y = point[1]+self.min_y
+		start_z = point[2]+self.min_z
+		for x in range(start_x, start_x+size[0]):
+			for y in range(start_y, start_y+size[1]):
+				for z in range(start_z, start_z+size[2]):
 		
