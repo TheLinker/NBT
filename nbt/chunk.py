@@ -1,4 +1,6 @@
 """ Handle a single chunk of data (16x16x128 blocks) """
+import array
+
 class Chunk(object):
 	def __init__(self, x, z, length):
 		self.coords = x,z
@@ -23,6 +25,51 @@ class BlockArray(object):
 			bits.append((b >> 15) & 15) # Big end of the byte
 			bits.append(b & 15) # Little end of the byte
 		return bits
+	
+	def get_blocks_struct(self):
+		cur_x = 0
+		cur_y = 0
+		cur_z = 0
+		blocks = {}
+		for block_id in self.blocksList:
+			blocks[(cur_x,cur_y,cur_z)] = block_id
+			cur_y += 1
+			if (cur_y > 127):
+				cur_y = 0
+				cur_z += 1
+				if (cur_z > 15):
+					cur_z = 0
+					cur_x += 1
+		return blocks
+	
+	# Give blockList back as a byte array
+	def get_blocks_byte_array(self):
+		return array.array('B', self.blocksList).tostring()
+		
+	def get_data_byte_array(self):
+		return array.array('B', self.dataList).tostring()
+			
+	def set_blocks(list=None, dict=None):
+		if list:
+			# Inputting a list like self.blocksList
+			self.blocksList = list
+		elif dict:
+			# Inputting a dictionary like result of self.get_blocks_struct()
+			list = []
+			for x in xrange(15):
+				for z in xrange(15):
+					for y in xrange(128):
+						coord = x,y,z
+						if (coord in dict):
+							list.append(dict(coord))
+						else:
+							list.append(0) # Air
+			self.blocksList = list
+		else:
+			# None of the above...
+			return False
+		return True
+	
 	
 	# Get a given X,Y,Z
 	def get_block(self, x,y,z):
