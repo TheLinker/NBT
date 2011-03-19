@@ -1,8 +1,9 @@
 from nbt import *
 from nbt.mapbuilder import utilities
 from nbt.region import RegionFile
+from nbt.chunk import BlockArray
 from StringIO import StringIO
-import argparse, os, random, sys, time
+import argparse, array, os, random, sys, time
 
 # Set up CLI parameters
 parser = argparse.ArgumentParser(description="Generate a Minecraft World")
@@ -32,28 +33,51 @@ region_z = 0
 region_filename = world_folder+'/region/r.'+str(region_x)+'.'+str(region_z)+'.mcr'
 utilities.blank_region(region_filename)
 region = RegionFile(region_filename)
+
+# Create chunk blocks
+blocks = BlockArray() # Generate empty
 chunk_blocks = {}
-chunk_blocks = utilities.draw_disk((7,7,5), 10, chunk_blocks)
+chunk_blocks = utilities.draw_disk((7,7,5), 10, chunk_blocks) # Draw a disk
+chunk_blocks = utilities.fill_blocks((0,0,0), (15,0,15), chunk_blocks, 7) # Make bedrock floor
+blocks.set_blocks(dict=chunk_blocks)
+
+blocks_byte = blocks.get_blocks_byte_array(buffer=True)
+data_byte = blocks.get_data_byte_array(buffer=True)
+heightmap = blocks.get_heightmap(buffer=True)
+
+
+# Create empty byte array buffers
+blank_16kb = []
+for i in range(2048):
+	blank_16kb.extend([0,0,0,0,0,0,0,0])
+
+length = len(blank_16kb)
+blank_16kb = pack(">i", length)+array.array('B', blank_16kb).tostring()
+
+
 for x in range(args.width):
 	for z in range(args.height):
 		chunk = NBTFile() # Blank NBT
+		# Rewind reused buffers
+		blocks_byte.seek(0)
+		data_byte.seek(0)
+		heightmap.seek(0)
+		
 		chunk.name = "Level"
 		chunk.tags.extend([
 			TAG_Byte(name="TerrainPopulated", value=1),
 			TAG_Int(name="xPos", value=x),
 			TAG_Int(name="zPos", value=z),
 			TAG_Long(name="LastUpdate", value=0),
-			TAG_Byte_Array(name="BlockLight", buffer=0),
-			TAG_Byte_Array(name="Blocks", buffer=0),
-			TAG_Byte_Array(name="Data", buffer=0),
-			TAG_Byte_Array(name="SkyLight", buffer=0),
-			TAG_Byte_Array(name="HeightMap", buffer=0),
+			TAG_Byte_Array(name="BlockLight", buffer=StringIO(blank_16kb)),
+			TAG_Byte_Array(name="Blocks", buffer=blocks_byte),
+			TAG_Byte_Array(name="Data", buffer=data_byte),
+			TAG_Byte_Array(name="SkyLight", buffer=StringIO(blank_16kb)),
+			TAG_Byte_Array(name="HeightMap", buffer=heightmap),
 			TAG_List(name="Entities", type=TAG_Compound),
 			TAG_List(name="TileEntities", type=TAG_Compound)
 		])
-		buffer = StringIO()
-		chunk.write_file(fileobj=buffer)
-		region.write_chunk(x,z, buffer)
+		region.write_chunk(x,z, chunk)
 
 # Create a level.dat
 # http://www.minecraftwiki.net/wiki/Alpha_Level_Format#level.dat_Format
@@ -86,3 +110,5 @@ player.tags.append(inventory)
 level.tags.append(player)
 
 level.write_file(world_folder+"/level.dat")
+
+print "World generated at "+world_folder
