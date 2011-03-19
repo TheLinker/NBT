@@ -9,9 +9,6 @@ class Chunk(object):
 	def __repr__(self):
 		return "("+str(self.coords[0])+","+str(self.coords[1])+"): "+str(self.length)
 
-def ByteToHex(byteStr):
-	return "".join(["%02X " % ord(x) for x in byteStr]).strip()
-
 """ Convenience class for dealing with a Block/data byte array """
 class BlockArray(object):
 	def __init__(self, blocksBytes, dataBytes):

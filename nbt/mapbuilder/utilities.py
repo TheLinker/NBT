@@ -1,5 +1,8 @@
 import math
 
+def ByteToHex(byteStr):
+	return "".join(["%02X " % ord(x) for x in byteStr]).strip()
+
 # Given a X,Y,Z tuple, what region file will this point be found in?
 def which_region(coord):
 	region_x = math.floor(coord[0]/16/32)
