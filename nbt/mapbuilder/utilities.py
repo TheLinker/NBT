@@ -31,8 +31,8 @@ def draw_disk(center, diameter, blocks, block_id=1, fill_air=False):
 		# diameter is even; center of disk is a point between blocks, the lower-southwest corner of the "center" coordinate given
 		center = (center[0]+0.5, center[1], center[2]+0.5)
 		extents += 0.5
-	print "Center: "+str(center[0])+","+str(center[1])+","+str(center[2])+"; Extents: "+str(extents)
-	print "Range: "+str(center[0]-extents)+","+str(center[0]+extents)
+	#print "Center: "+str(center[0])+","+str(center[1])+","+str(center[2])+"; Extents: "+str(extents)
+	#print "Range: "+str(center[0]-extents)+","+str(center[0]+extents)
 	for x in range(int(center[0]-extents), int(center[0]+extents)):
 		for z in range(int(center[2]-extents), int(center[2]+extents)):
 			if (math.sqrt(math.pow(x-center[0],2)+math.pow(z-center[2],2)) <= radius):
