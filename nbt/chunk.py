@@ -1,4 +1,6 @@
 """ Handle a single chunk of data (16x16x128 blocks) """
+from StringIO import StringIO
+from struct import pack, unpack
 import array
 
 class Chunk(object):
@@ -54,12 +56,35 @@ class BlockArray(object):
 		return blocks
 	
 	# Give blockList back as a byte array
-	def get_blocks_byte_array(self):
-		return array.array('B', self.blocksList).tostring()
+	def get_blocks_byte_array(self, buffer=False):
+		if buffer:
+			length = len(self.blocksList)
+			return StringIO(pack(">i", length)+self.get_blocks_byte_array())
+		else:
+			return array.array('B', self.blocksList).tostring()
 		
-	def get_data_byte_array(self):
-		return array.array('B', self.dataList).tostring()
-			
+	def get_data_byte_array(self, buffer=False):
+		if buffer:
+			length = len(self.dataList)/2
+			return StringIO(pack(">i", length)+self.get_data_byte_array())
+		else:
+			return array.array('B', self.dataList).tostring()
+	
+	def get_heightmap(self, buffer=False):
+		if buffer:
+			return StringIO(pack(">i", 256)+self.get_heightmap())
+		else:
+			bytes = []
+			for z in range(16):
+				for x in range(16):
+					for y in range(127, -1, -1):
+						offset = y + z*128 + x*128*16
+						if (self.blocksList[offset] != 0 or y == 0):
+							bytes.append(y)
+							break
+			return array.array('B', bytes).tostring()
+						
+						
 	def set_blocks(self, list=None, dict=None, fill_air=False):
 		if list:
 			# Inputting a list like self.blocksList
