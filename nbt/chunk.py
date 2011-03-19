@@ -110,6 +110,10 @@ class BlockArray(object):
 			return False
 		return True
 	
+	def set_block(self, x,y,z, id):
+		offset = y + z*128 + x*128*16
+		self.blocksList[offset] = id
+
 	
 	# Get a given X,Y,Z
 	def get_block(self, x,y,z):
