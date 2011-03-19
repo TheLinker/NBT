@@ -63,3 +63,10 @@ def draw_sphere(center, diameter, blocks, block_id=1, fill_air=False):
 					if fill_air:
 						blocks[(x,y,z)] = 0
 	return blocks
+
+def fill_blocks(start, end, blocks, block_id=1):
+	for x in range(start[0], end[0]+1):
+		for y in range(start[1], end[1]+1):
+			for z in range(start[2], end[2]+1):
+				blocks[(x,y,z)] = block_id
+	return blocks
