@@ -60,21 +60,25 @@ class BlockArray(object):
 	def get_data_byte_array(self):
 		return array.array('B', self.dataList).tostring()
 			
-	def set_blocks(list=None, dict=None):
+	def set_blocks(self, list=None, dict=None, fill_air=False):
 		if list:
 			# Inputting a list like self.blocksList
 			self.blocksList = list
 		elif dict:
 			# Inputting a dictionary like result of self.get_blocks_struct()
 			list = []
-			for x in xrange(15):
-				for z in xrange(15):
-					for y in xrange(128):
+			for x in range(16):
+				for z in range(16):
+					for y in range(128):
 						coord = x,y,z
+						offset = y + z*128 + x*128*16
 						if (coord in dict):
-							list.append(dict(coord))
+							list.append(dict[coord])
 						else:
-							list.append(0) # Air
+							if (self.blocksList[offset] and not fill_air):
+								list.append(self.blocksList[offset])
+							else:
+								list.append(0) # Air
 			self.blocksList = list
 		else:
 			# None of the above...
