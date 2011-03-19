@@ -11,9 +11,23 @@ class Chunk(object):
 
 """ Convenience class for dealing with a Block/data byte array """
 class BlockArray(object):
-	def __init__(self, blocksBytes, dataBytes):
-		self.blocksList = [ord(b) for b in blocksBytes] # A list of bytes
-		self.dataList = [ord(b) for b in dataBytes]
+	def __init__(self, blocksBytes=None, dataBytes=None):
+		if (blocksBytes != None):
+			self.blocksList = [ord(b) for b in blocksBytes] # A list of bytes
+		else:
+			# Create an empty block list (32768 entries of zero (air))
+			self.blocksList = []
+			for i in range(4096):
+				self.blocksList.extend([0,0,0,0,0,0,0,0])
+		
+		if (dataBytes != None):
+			self.dataList = [ord(b) for b in dataBytes]
+		else:
+			# Create an empty data list (32768 entries of zero)
+			self.dataList = []
+			for i in range(4096):
+				self.dataList.extend([0,0,0,0,0,0,0,0])
+			
 
 	# Get all data entries
 	def get_all_data(self):
