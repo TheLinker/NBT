@@ -108,8 +108,8 @@ player.tags.extend([
 	TAG_Int(name="Score", value=0),
 	TAG_Int(name="Dimension", value=0)
 ])
-inventory = TAG_Compound()
-inventory.name = "Inventory"
+
+inventory = TAG_List(name="Inventory", type=TAG_Compound)
 player.tags.append(inventory)
 level.tags.append(player)
 
