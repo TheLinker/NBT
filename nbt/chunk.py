@@ -80,7 +80,7 @@ class BlockArray(object):
 					for y in range(127, -1, -1):
 						offset = y + z*128 + x*128*16
 						if (self.blocksList[offset] != 0 or y == 0):
-							bytes.append(y)
+							bytes.append(y+1)
 							break
 			return array.array('B', bytes).tostring()
 						
