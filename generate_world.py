@@ -67,8 +67,9 @@ for x in range(args.width):
 		data_byte.seek(0)
 		heightmap.seek(0)
 		
-		chunk.name = "Level"
-		chunk.tags.extend([
+		level = TAG_Compound()
+		level.name = "Level"
+		level.tags.extend([
 			TAG_Byte(name="TerrainPopulated", value=1),
 			TAG_Int(name="xPos", value=x),
 			TAG_Int(name="zPos", value=z),
@@ -81,6 +82,7 @@ for x in range(args.width):
 			TAG_List(name="Entities", type=TAG_Compound),
 			TAG_List(name="TileEntities", type=TAG_Compound)
 		])
+		chunk.tags.append(level)
 		region.write_chunk(x,z, chunk)
 
 # Create a level.dat
@@ -89,8 +91,9 @@ spawn_x = args.width*8
 spawn_z = args.height*8
 
 level = NBTFile() # Blank NBT
-level.name = "Data"
-level.tags.extend([
+data = TAG_Compound()
+data.name = "Data"
+data.tags.extend([
 	TAG_Long(name="Time", value=1),
 	TAG_Long(name="LastPlayed", value=int(time.time())),
 	TAG_Int(name="SpawnX", value=spawn_x),
@@ -111,7 +114,9 @@ player.tags.extend([
 
 inventory = TAG_List(name="Inventory", type=TAG_Compound)
 player.tags.append(inventory)
-level.tags.append(player)
+
+data.tags.append(player)
+level.tags.append(data)
 
 level.write_file(world_folder+"/level.dat")
 
