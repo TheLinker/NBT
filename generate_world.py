@@ -47,12 +47,16 @@ heightmap = blocks.get_heightmap(buffer=True)
 
 
 # Create empty byte array buffers
-blank_16kb = []
+blocklight_bytes = []
+skylight_bytes = []
 for i in range(2048):
-	blank_16kb.extend([0,0,0,0,0,0,0,0])
+	blocklight_bytes.extend([0,0,0,0,0,0,0,0])
+	skylight_bytes.extend([255,255,255,255,255,255,255,255])
 
-length = len(blank_16kb)
-blank_16kb = pack(">i", length)+array.array('B', blank_16kb).tostring()
+length = len(blocklight_bytes)
+blocklight_bytes = pack(">i", length)+array.array('B', blocklight_bytes).tostring()
+length = len(skylight_bytes)
+skylight_bytes = pack(">i", length)+array.array('B', skylight_bytes).tostring()
 
 
 for x in range(args.width):
@@ -69,10 +73,10 @@ for x in range(args.width):
 			TAG_Int(name="xPos", value=x),
 			TAG_Int(name="zPos", value=z),
 			TAG_Long(name="LastUpdate", value=0),
-			TAG_Byte_Array(name="BlockLight", buffer=StringIO(blank_16kb)),
+			TAG_Byte_Array(name="BlockLight", buffer=StringIO(blocklight_bytes)),
 			TAG_Byte_Array(name="Blocks", buffer=blocks_byte),
 			TAG_Byte_Array(name="Data", buffer=data_byte),
-			TAG_Byte_Array(name="SkyLight", buffer=StringIO(blank_16kb)),
+			TAG_Byte_Array(name="SkyLight", buffer=StringIO(skylight_bytes)),
 			TAG_Byte_Array(name="HeightMap", buffer=heightmap),
 			TAG_List(name="Entities", type=TAG_Compound),
 			TAG_List(name="TileEntities", type=TAG_Compound)
