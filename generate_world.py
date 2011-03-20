@@ -95,7 +95,7 @@ data = TAG_Compound()
 data.name = "Data"
 data.tags.extend([
 	TAG_Long(name="Time", value=1),
-	TAG_Long(name="LastPlayed", value=int(time.time())),
+	TAG_Long(name="LastPlayed", value=int(time.time()*1000)),
 	TAG_Int(name="SpawnX", value=spawn_x),
 	TAG_Int(name="SpawnY", value=2),
 	TAG_Int(name="SpawnZ", value=spawn_z),
