@@ -38,6 +38,7 @@ class ReadWriteTest(unittest.TestCase):     # test that we can read the test fil
         mynbt = NBTFile("bigtest.nbt")
         output = StringIO()
         mynbt.write_file(buffer=output)
+        output.buf = ''
         self.assertEqual(GzipFile("bigtest.nbt").read(), output.getvalue())
 
     def testWriteback(self):
