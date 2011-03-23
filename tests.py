@@ -1,5 +1,5 @@
 from nbt import *
-from nbt import _TAG_Numeric
+from nbt.nbt import _TAG_Numeric
 import unittest
 from StringIO import StringIO
 from gzip import GzipFile
