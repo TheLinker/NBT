@@ -317,7 +317,6 @@ class NBTFile(TAG_Compound):
         else: ValueError("need a file!")
 
     def write_file(self, filename=None, buffer=None, fileobj=None):
-        self.filename = None
         if buffer:
             self.file = buffer
         elif filename:
